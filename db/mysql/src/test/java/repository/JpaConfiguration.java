@@ -1,4 +1,4 @@
-package com.demo.repository;
+package repository;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

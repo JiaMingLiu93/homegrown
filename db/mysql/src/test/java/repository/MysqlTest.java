@@ -1,8 +1,11 @@
-package com.demo.repository;
+package repository;
 
 import com.demo.entity.Department;
 import com.demo.entity.Role;
 import com.demo.entity.User;
+import com.demo.repository.DepartmentRepository;
+import com.demo.repository.RoleRepository;
+import com.demo.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +34,7 @@ public class MysqlTest {
     @Autowired
     DepartmentRepository departmentRepository;
     @Autowired
-    RoleRepository  roleRepository;
+    RoleRepository roleRepository;
 
     @Before
     public void initData(){
