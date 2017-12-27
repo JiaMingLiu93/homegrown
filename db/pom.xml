@@ -10,6 +10,7 @@
     <modules>
         <module>mysql</module>
         <module>redis</module>
+        <module>mongodb</module>
     </modules>
     <name>db</name>
     <url>http://maven.apache.org</url>
