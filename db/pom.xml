@@ -11,6 +11,7 @@
         <module>mysql</module>
         <module>redis</module>
         <module>mongodb</module>
+        <module>neo4j</module>
     </modules>
     <name>db</name>
     <url>http://maven.apache.org</url>
