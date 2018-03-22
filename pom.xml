@@ -8,6 +8,7 @@
   <modules>
     <module>db</module>
       <module>ui</module>
+      <module>dbup</module>
   </modules>
   <packaging>pom</packaging>
 
