@@ -9,6 +9,7 @@
     <module>db</module>
       <module>ui</module>
       <module>dbup</module>
+    <module>springdiscover</module>
   </modules>
   <packaging>pom</packaging>
 
