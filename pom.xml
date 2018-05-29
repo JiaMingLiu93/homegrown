@@ -10,6 +10,8 @@
       <module>ui</module>
       <module>dbup</module>
     <module>springdiscover</module>
+      <module>fabric</module>
+      <module>test</module>
   </modules>
   <packaging>pom</packaging>
 
