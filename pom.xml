@@ -12,6 +12,7 @@
     <module>springdiscover</module>
       <module>fabric</module>
       <module>test</module>
+      <module>oauth</module>
   </modules>
   <packaging>pom</packaging>
 
