@@ -13,6 +13,8 @@
       <module>fabric</module>
       <module>test</module>
       <module>oauth</module>
+      <module>basic</module>
+    <module>micro</module>
   </modules>
   <packaging>pom</packaging>
 
