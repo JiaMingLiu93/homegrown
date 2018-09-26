@@ -1,4 +1,4 @@
-package com.demo.validate;
+package com.demo.test.validate;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
