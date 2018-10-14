@@ -14,6 +14,7 @@
     <url>http://www.example.com</url>
     <modules>
         <module>spring-overwrite</module>
+        <module>concurrence</module>
     </modules>
 
     <packaging>pom</packaging>

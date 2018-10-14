@@ -3,7 +3,6 @@ package overwrite.spring.context;
 import overwrite.spring.beans.HomeBeanDefinition;
 import overwrite.spring.context.support.HomeBeanDefinitionReader;
 
-import java.rmi.registry.Registry;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +39,13 @@ public class HomeApplicationContext {
         //registry
         registry(beanClassNames);
 
+        //autowire
+        autowire();
         System.out.println(beanDefinitions);
+    }
+
+    private void autowire() {
+
     }
 
     private void registry(List<String> beanClassNames) {
