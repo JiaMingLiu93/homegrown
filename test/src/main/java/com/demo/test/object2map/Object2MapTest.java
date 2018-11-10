@@ -11,9 +11,12 @@ import java.util.Map;
  **/
 public class Object2MapTest {
     public static void main(String[] args) {
-        ObjectMapper objectMapper = new ObjectMapper();
         Object2MapEntity entity = new Object2MapEntity("liu", 18L);
-        Map<String,Object> map = (Map<String,Object>)objectMapper.convertValue(entity, Map.class);
-        System.out.println(map);
+        System.out.println(getMap(entity));
+    }
+
+    private static <T> Map getMap(T param){
+        ObjectMapper objectMapper = new ObjectMapper();
+        return (Map<String,Object>)objectMapper.convertValue(param, Map.class);
     }
 }

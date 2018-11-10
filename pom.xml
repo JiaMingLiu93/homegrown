@@ -15,6 +15,7 @@
       <module>oauth</module>
       <module>basic</module>
     <module>micro</module>
+      <module>dubbo</module>
   </modules>
   <packaging>pom</packaging>
 
