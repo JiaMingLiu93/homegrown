@@ -30,6 +30,6 @@ public class EmployeeAspectPointcut {
 
     @Before("allMethodsPointcut()")
     public void allServiceMethodsAdvice(){
-        System.out.println("Before executing service method");
+        System.out.println("Before executing META-INF.services method");
     }
 }

@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- services -->
+    <!-- META-INF.META-INF.services -->
 
     <bean id="xmlConfigBean" class="com.demo.discover.xml.XmlConfigBean">
         <property name="name" value="jam"/>
@@ -12,6 +12,6 @@
         <!-- additional collaborators and configuration for this bean go here -->
     </bean>
 
-    <!-- more bean definitions for services go here -->
+    <!-- more bean definitions for META-INF.META-INF.services go here -->
 
 </beans>
