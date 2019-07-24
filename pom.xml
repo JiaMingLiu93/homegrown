@@ -16,6 +16,7 @@
       <module>basic</module>
     <module>micro</module>
       <module>dubbo</module>
+      <module>mq</module>
   </modules>
   <packaging>pom</packaging>
 
