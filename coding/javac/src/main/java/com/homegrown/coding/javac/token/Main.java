@@ -7,7 +7,9 @@ package com.homegrown.coding.javac.token;
  **/
 public class Main {
     public static void main(String[] args) {
-        int compile = com.sun.tools.javac.Main.compile(new String[]{"/Users/jam/study/code/homegrown/coding/javac/src/main/java/com/homegrown/coding/javac/token/Token.java"});
-        System.out.println(compile);
+//        int compile = com.sun.tools.javac.Main.compile(new String[]{"/Users/jam/study/code/homegrown/coding/javac/src/main/java/com/homegrown/coding/javac/token/Token.java"});
+//        System.out.println(compile);
+        Float value = Float.valueOf("0x1.0p1");
+        System.out.println(value);
     }
 }
