@@ -1,9 +1,7 @@
 package com.homegrown.coding.javac.token.self.parser;
 
 import com.sun.tools.javac.file.JavacFileManager;
-import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.Log;
-import com.sun.tools.javac.util.Names;
+import com.sun.tools.javac.util.*;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;
@@ -122,7 +120,126 @@ public class NUnicodeReader {
         return result;
     }
 
+    /**
+     * Returns a copy of the input buffer, up to its inputLength.
+     * Unicode escape sequences are not translated.
+     *
+     * 复制一份输入缓存
+     * Unicode转义序列不会被翻译
+     */
+    public char[] getRawCharacters() {
+        char[] chars = new char[buflen];
+        System.arraycopy(buf, 0, chars, 0, buflen);
+        return chars;
+    }
+
+    /**
+     * Returns a copy of a character array subset of the input buffer.
+     * The returned array begins at the {@code beginIndex} and
+     * extends to the character at index {@code endIndex - 1}.
+     * Thus the length of the substring is {@code endIndex-beginIndex}.
+     * This behavior is like
+     * {@code String.substring(beginIndex, endIndex)}.
+     * Unicode escape sequences are not translated.
+     *
+     * @param beginIndex the beginning index, inclusive.
+     * @param endIndex the ending index, exclusive.
+     * @throws ArrayIndexOutOfBoundsException if either offset is outside of the
+     *         array bounds
+     */
+    public char[] getRawCharacters(int beginIndex, int endIndex) {
+        int length = endIndex - beginIndex;
+        char[] chars = new char[length];
+        System.arraycopy(buf, beginIndex, chars, 0, length);
+        return chars;
+    }
+
+    /** Append a character to sbuf.
+     */
+    protected void putChar(char ch, boolean scan) {
+        sbuf = ArrayUtils.ensureCapacity(sbuf, sp);
+        sbuf[sp++] = ch;
+        if (scan)
+            scanChar();
+    }
+
+    protected void putChar(char ch) {
+        putChar(ch, false);
+    }
+
+    protected void putChar(boolean scan) {
+        putChar(ch, scan);
+    }
+
+    Name name() {
+        return names.fromChars(sbuf, 0, sp);
+    }
+
+    /** Are surrogates supported?
+     */
+    final static boolean surrogatesSupported = surrogatesSupported();
+    private static boolean surrogatesSupported() {
+        try {
+            Character.isHighSurrogate('a');
+            return true;
+        } catch (NoSuchMethodError ex) {
+            return false;
+        }
+    }
+
+    /** Scan surrogate pairs.  If 'ch' is a high surrogate and
+     *  the next character is a low surrogate, then put the low
+     *  surrogate in 'ch', and return the high surrogate.
+     *  otherwise, just return 0.
+     */
+    protected char scanSurrogates() {
+        if (surrogatesSupported && Character.isHighSurrogate(ch)) {
+            char high = ch;
+
+            scanChar();
+
+            if (Character.isLowSurrogate(ch)) {
+                return high;
+            }
+
+            ch = high;
+        }
+
+        return 0;
+    }
+
+    /** Read next character in comment, skipping over double '\' characters.
+     */
+    protected void scanCommentChar() {
+        scanChar();
+        if (ch == '\\') {
+            if (peekChar() == '\\' && !isUnicode()) {
+                skipChar();
+            } else {
+                convertUnicode();
+            }
+        }
+    }
+
+    protected char peekChar() {
+        return buf[bp + 1];
+    }
+
+    protected boolean isUnicode() {
+        return unicodeConversionBp == bp;
+    }
+
+    protected void skipChar() {
+        bp++;
+    }
+
+    String chars() {
+        return new String(sbuf, 0, sp);
+    }
+
     public static void main(String[] args) {
+        System.out.println((char)26469);
+
         String value = "i'm from China";
         String value1 = "\\u6211\\u6765\\u81ea\\u4e2d\\u56fd\\u000d\\u000a";
         String value2 = "我来自中国";

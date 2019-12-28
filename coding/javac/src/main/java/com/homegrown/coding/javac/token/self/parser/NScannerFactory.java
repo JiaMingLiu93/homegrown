@@ -28,7 +28,7 @@ public class NScannerFactory {
     final Log log;
     final Names names;
     final Source source;
-    final Tokens tokens;
+    final NTokens tokens;
 
     /** Create a new scanner factory. */
     protected NScannerFactory(Context context) {
@@ -36,7 +36,7 @@ public class NScannerFactory {
         this.log = Log.instance(context);
         this.names = Names.instance(context);
         this.source = Source.instance(context);
-        this.tokens = Tokens.instance(context);
+        this.tokens = NTokens.instance(context);
     }
 
 

@@ -21,6 +21,13 @@ public class Token {
         return a+c;
     }
 
+    private int cal(int b){
+        if (b>0){
+            return a+b;
+        }
+        return b;
+    }
+
     public static void main(String[] args) {
         Token token = new Token();
         token.cal();
