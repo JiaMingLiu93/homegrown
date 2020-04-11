@@ -15,6 +15,9 @@
     <modules>
         <module>spring-overwrite</module>
         <module>concurrence</module>
+        <module>log</module>
+        <module>design-pattern</module>
+        <module>algorithm</module>
     </modules>
 
     <packaging>pom</packaging>

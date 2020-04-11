@@ -19,6 +19,7 @@
       <module>mq</module>
       <module>coding</module>
       <module>shutter</module>
+      <module>framework</module>
   </modules>
   <packaging>pom</packaging>
 
