@@ -20,6 +20,7 @@
       <module>coding</module>
       <module>shutter</module>
       <module>framework</module>
+      <module>middleware</module>
   </modules>
   <packaging>pom</packaging>
 
