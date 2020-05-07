@@ -10,9 +10,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  */
 @SpringBootApplication
 public class SpringApplicationTest {
-    public static void main( String[] args ) {
-//        SpringApplication.run(SpringApplicationTest.class);
-        new SpringApplicationBuilder(SpringApplicationTest.class)
-                .run(args);
-    }
+//    public static void main( String[] args ) {
+////        SpringApplication.run(SpringApplicationTest.class);
+//        new SpringApplicationBuilder(SpringApplicationTest.class)
+//                .run(args);
+//    }
 }

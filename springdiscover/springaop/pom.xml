@@ -82,52 +82,52 @@
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
                     <inherited>false</inherited>
-                    <executions>
-                        <execution>
-                            <id>aspectjtools</id>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                            <phase>install</phase>
-                            <configuration>
-                                <groupId>org.aspectj</groupId>
-                                <artifactId>aspectjtools</artifactId>
-                                <version>${aspectj.version}</version>
-                                <packaging>jar</packaging>
-                                <file>${basedir}/libs/aspectjtools-1.7.4.jar</file>
-                            </configuration>
-                        </execution>
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>aspectjtools</id>-->
+                            <!--<goals>-->
+                                <!--<goal>install-file</goal>-->
+                            <!--</goals>-->
+                            <!--<phase>install</phase>-->
+                            <!--<configuration>-->
+                                <!--<groupId>org.aspectj</groupId>-->
+                                <!--<artifactId>aspectjtools</artifactId>-->
+                                <!--<version>${aspectj.version}</version>-->
+                                <!--<packaging>jar</packaging>-->
+                                <!--<file>${basedir}/libs/aspectjtools-1.7.4.jar</file>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
 
-                        <execution>
-                            <id>aspectjrt</id>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                            <phase>install</phase>
-                            <configuration>
-                                <groupId>org.aspectj</groupId>
-                                <artifactId>aspectjrt</artifactId>
-                                <version>${aspectj.version}</version>
-                                <packaging>jar</packaging>
-                                <file>${basedir}/libs/aspectjrt-1.7.4.jar</file>
-                            </configuration>
-                        </execution>
+                        <!--<execution>-->
+                            <!--<id>aspectjrt</id>-->
+                            <!--<goals>-->
+                                <!--<goal>install-file</goal>-->
+                            <!--</goals>-->
+                            <!--<phase>install</phase>-->
+                            <!--<configuration>-->
+                                <!--<groupId>org.aspectj</groupId>-->
+                                <!--<artifactId>aspectjrt</artifactId>-->
+                                <!--<version>${aspectj.version}</version>-->
+                                <!--<packaging>jar</packaging>-->
+                                <!--<file>${basedir}/libs/aspectjrt-1.7.4.jar</file>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
 
-                        <execution>
-                            <id>spring-tx</id>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                            <phase>install</phase>
-                            <configuration>
-                                <groupId>org.springframework</groupId>
-                                <artifactId>spring-tx</artifactId>
-                                <version>${spring-framework.version}</version>
-                                <packaging>jar</packaging>
-                                <file>${basedir}/libs/spring-tx-4.0.2.RELEASE.jar</file>
-                            </configuration>
-                        </execution>
-                    </executions>
+                        <!--<execution>-->
+                            <!--<id>spring-tx</id>-->
+                            <!--<goals>-->
+                                <!--<goal>install-file</goal>-->
+                            <!--</goals>-->
+                            <!--<phase>install</phase>-->
+                            <!--<configuration>-->
+                                <!--<groupId>org.springframework</groupId>-->
+                                <!--<artifactId>spring-tx</artifactId>-->
+                                <!--<version>${spring-framework.version}</version>-->
+                                <!--<packaging>jar</packaging>-->
+                                <!--<file>${basedir}/libs/spring-tx-4.0.2.RELEASE.jar</file>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
                 </plugin>
             </plugins>
         </pluginManagement>
