@@ -1,0 +1,34 @@
+adapter:
+  event:
+    beforeColumns: true
+#    standardEvent:
+#      enable: true
+#      topic: retal-mall
+#      tag: PARANA_SEARCH_STANDARD_EVENT
+#    standardDataMSG:
+#      topic: retal-mall
+#      filterTable: parana_item,index_item
+#      batchSize: 100
+#      includeBefore: true
+#    worker:
+#      corePoolSize:
+#      maximumPoolSize:
+#      workQueueSize:
+#      keepAliveTime:
+    canal:
+      server:
+#        zookeeper:
+#          addressList: 127.0.0.1:2181,127.0.0.1:2182
+#          username:
+#          password:
+        nodes:
+          addressList: 127.0.0.1:11111
+          username:
+          password:
+        destination: # 当前只支持单destination的配置
+          example:
+            filterRegex: canal\..*
+            retryConnectSleepMillis: 300
+            pullBatchSize: 1000
+            blockWaitMillis: 500
+            idleSpinMillis: 500

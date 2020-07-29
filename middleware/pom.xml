@@ -12,6 +12,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>zookeeper</module>
+        <module>rocketMq</module>
+        <module>canal-client</module>
     </modules>
 
 </project>

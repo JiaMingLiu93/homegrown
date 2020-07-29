@@ -36,5 +36,7 @@ public class CharacterTest {
 
         System.out.println('\u263a');
         System.out.println('\uFFFF');
+
+        System.out.println(0x1 << 0);
     }
 }
