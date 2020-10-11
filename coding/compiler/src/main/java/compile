@@ -1,0 +1,2 @@
+#!/bin/sh
+javac -cp ~/company/code/homegrown/coding/compiler/src/main/java/com/homegrown/coding/compiler/lang/script/craft/antlrtest/lib/antlr-4.7.2-complete.jar:$CLASSPATH $*

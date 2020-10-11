@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 /**
  * @author youyu
  */
-public interface SourceEventConsumer<EVENT> {
+public interface SourceEventConsumer {
     /**
      * set customise and appropriate executor for parallel processing event.
      * @param executor executor
@@ -17,5 +17,5 @@ public interface SourceEventConsumer<EVENT> {
      * @param domain the range of event
      * @param event event from the domain
      */
-    void process(String domain,EVENT event);
+    void process(String domain,Object event);
 }

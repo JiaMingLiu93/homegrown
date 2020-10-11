@@ -18,6 +18,8 @@
         <module>log</module>
         <module>design-pattern</module>
         <module>algorithm</module>
+        <module>junit</module>
+        <module>exception</module>
     </modules>
 
     <packaging>pom</packaging>

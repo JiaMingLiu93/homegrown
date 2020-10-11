@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author youyu
  */
 @Component
-public class CanalSourceEventConsumer extends AbstractSourceEventConsumer<List<CanalEntry.Entry>> implements SmartInitializingSingleton {
+public class CanalSourceEventConsumer extends AbstractSourceEventConsumer<List<CanalEntry.Entry>> {
 
     @Autowired
     private CanalConfigProperties properties;
@@ -57,26 +57,6 @@ public class CanalSourceEventConsumer extends AbstractSourceEventConsumer<List<C
     @Override
     protected void records(String database, List<CanalEntry.Entry> entries) {
 
-    }
-
-    @Override
-    public void afterSingletonsInstantiated() {
-        running = true;
-
-        Map.Entry<String, DestinationConfig> entry = Iterables.get(properties.getDestination().entrySet(), 0);
-        String destination = entry.getKey();
-        DestinationConfig destinationConfig = entry.getValue();
-
-        String addressList = properties.getNodes().getAddressList();
-
-        String address = addressList.split(",")[0];
-        String[] hp = address.split(":");
-
-        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress(hp[0], Integer.parseInt(hp[1])), destination, properties.getNodes().getUsername(), properties.getNodes().getPassword());
-
-        LongCanalConnection longCanalConnection = new LongCanalConnection(destination, connector, destinationConfig, this);
-
-        new Thread(longCanalConnection,"canal-event-dest-"+destination).start();
     }
 
     @Slf4j

@@ -1,27 +1,23 @@
 package com.demo.middleware.canal.connection;
 
-import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.client.CanalConnectors;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
-import com.demo.middleware.canal.config.CanalConfigProperties;
-import com.demo.middleware.canal.config.DestinationConfig;
 import com.demo.middleware.canal.consumer.CanalSourceEventConsumer;
-import com.google.common.collect.Iterables;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.common.utils.ThreadUtils;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.InetSocketAddress;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * Long connection to canal server for acquiring binlog
+ * LongCanalConnection also could be abstract to LongConnection for kinds of implements to connect source,
+ * which is convenient to scale,for example,connecting to broker of rocket mq.
  * @author youyu
  */
 @AllArgsConstructor
@@ -31,34 +27,38 @@ import java.util.function.Consumer;
 public class LongCanalConnection implements Runnable, SmartInitializingSingleton {
 
     @Autowired
-    private CanalConfigProperties properties;
+    private ConfigurationReadableCanalConnector connector;
 
-    private String destination;
-
-    @Setter
-    @Getter
-    private CanalConnector connector;
-
-    private DestinationConfig config;
+    @Autowired
+    private CanalSourceEventConnector canalSourceEventConnector;
 
     @Autowired
     private CanalSourceEventConsumer canalSourceEventConsumer;
 
-    private volatile boolean running;
 
     @Override
     public void run() {
-        while (canalSourceEventConsumer.isRunning()){
+        while (canalSourceEventConnector.isRunning()){
+            canalSourceEventConnector.connect();
+            List<CanalEntry.Entry> entries = canalSourceEventConnector.acquire();
+            canalSourceEventConsumer.process(canalSourceEventConnector.getSource(),entries);
+        }
+        canalSourceEventConnector.disConnect();
+
+
+
+        ////////////////////////////////
+        while (connector.isRunning()){
             try {
                 connector.connect();
-                connector.subscribe(config.getFilterRegex());
+                connector.subscribe(connector.getDestinationConfig().getFilterRegex());
                 connector.rollback();
-                log.warn("It is success to connect Canal server.destination={},filterRegex={}",destination,config.getFilterRegex());
+                log.warn("It is success to connect Canal server.destination={},filterRegex={}",connector.getDestination(),connector.getDestinationConfig().getFilterRegex());
                 pullMessage();
             }catch (Exception e){
-                log.error("There is exception when connect Canal server.destination={},cause:",destination,e);
+                log.error("There is exception when connect Canal server.destination={},cause:",connector.getDestination(),e);
                 try {
-                    Thread.sleep(config.getBlockWaitMillis());
+                    Thread.sleep(connector.getDestinationConfig().getBlockWaitMillis());
                 } catch (InterruptedException interruptedException) {
                     log.error(interruptedException.getMessage(),interruptedException);
                     break;
@@ -81,15 +81,15 @@ public class LongCanalConnection implements Runnable, SmartInitializingSingleton
     }
 
     private void pullMessage() {
-        while (canalSourceEventConsumer.isRunning()){
-            Message message = (config.getBlockWaitMillis() <= 0) ?
-                    connector.getWithoutAck(config.getPullBatchSize()) :
-                    connector.getWithoutAck(config.getPullBatchSize(), config.getBlockWaitMillis(), TimeUnit.MILLISECONDS);
+        while (connector.isRunning()){
+            Message message = (connector.getDestinationConfig().getBlockWaitMillis() <= 0) ?
+                    connector.getWithoutAck(connector.getDestinationConfig().getPullBatchSize()) :
+                    connector.getWithoutAck(connector.getDestinationConfig().getPullBatchSize(), connector.getDestinationConfig().getBlockWaitMillis(), TimeUnit.MILLISECONDS);
             long batchId = message.getId();
             int size = message.getEntries().size();
             if (batchId == -1 || size<=0){
                 try {
-                    Thread.sleep(config.getIdleSpinMillis());
+                    Thread.sleep(connector.getDestinationConfig().getIdleSpinMillis());
                 } catch (InterruptedException e) {
                     log.warn(e.getMessage(),e);
                     //if thread has been interrupted,skip loop
@@ -97,7 +97,7 @@ public class LongCanalConnection implements Runnable, SmartInitializingSingleton
                 }
             }else {
                 try {
-                    canalSourceEventConsumer.process(destination,message.getEntries());
+                    canalSourceEventConsumer.process(connector.getDestination(),message.getEntries());
                     connector.ack(batchId);
                 }catch (Exception e){
                     log.error(e.getMessage(),e);
@@ -110,19 +110,6 @@ public class LongCanalConnection implements Runnable, SmartInitializingSingleton
 
     @Override
     public void afterSingletonsInstantiated() {
-        running = true;
-
-        Map.Entry<String, DestinationConfig> entry = Iterables.get(properties.getDestination().entrySet(), 0);
-
-        destination = entry.getKey();
-        config = entry.getValue();
-
-        String addressList = properties.getNodes().getAddressList();
-
-        String address = addressList.split(",")[0];
-        String[] hp = address.split(":");
-
-        connector = CanalConnectors.newSingleConnector(new InetSocketAddress(hp[0], Integer.parseInt(hp[1])), destination, properties.getNodes().getUsername(), properties.getNodes().getPassword());
-        new Thread(this,"canal-event-dest-"+destination).start();
+        new Thread(this,"canal-event-dest-"+connector).start();
     }
 }
