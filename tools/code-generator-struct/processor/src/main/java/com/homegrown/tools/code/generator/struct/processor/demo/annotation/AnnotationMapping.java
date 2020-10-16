@@ -1,5 +1,10 @@
 package com.homegrown.tools.code.generator.struct.processor.demo.annotation;
 
+import com.homegrown.tools.code.generator.struct.processor.demo.utils.APUtils;
+
+import javax.lang.model.type.TypeMirror;
+import java.util.List;
+
 /**
  * Mapping of config annotation,such as {@link RequestTypeConfig}
  * @author youyu
@@ -11,9 +16,9 @@ public class AnnotationMapping {
     private String model;
 
     private String packageName;
-    private String[] annotations;
-    private String[] imports;
-    private String superClassName;
+    private List<? extends TypeMirror> annotations;
+    private List<? extends TypeMirror> imports;
+    private TypeMirror superClass;
     private String className;
 
     public AnnotationMapping(Builder builder) {
@@ -24,7 +29,7 @@ public class AnnotationMapping {
         this.packageName = builder.packageName;;
         this.annotations = builder.annotations;;
         this.imports = builder.imports;
-        this.superClassName = builder.superClassName;
+        this.superClass = builder.superClass;
         this.className = builder.className;
     }
 
@@ -40,20 +45,20 @@ public class AnnotationMapping {
     public static AnnotationMapping from(RequestTypeConfig config) {
         return new Builder()
                 .setClassName(config.className())
-                .setAnnotations(config.annotations())
-                .setImports(config.imports())
+                .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
+                .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
                 .setPackageName(config.packageName())
-                .setSuperClassName(config.superClassName())
+                .setSuperClass(APUtils.getTypeMirrorFromAnnotationValue(config::superClass).get(0))
                 .build();
     }
 
     public static AnnotationMapping from(RepoTypeConfig config) {
         return new Builder()
                 .setClassName(config.className())
-                .setAnnotations(config.annotations())
-                .setImports(config.imports())
+                .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
+                .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
                 .setPackageName(config.packageName())
-                .setSuperClassName(config.superClassName())
+                .setSuperClass(APUtils.getTypeMirrorFromAnnotationValue(config::superClass).get(0))
                 .build();
     }
 
@@ -69,9 +74,9 @@ public class AnnotationMapping {
         private String model;
 
         private String packageName;
-        private String[] annotations;
-        private String[] imports;
-        private String superClassName;
+        private List<? extends TypeMirror> annotations;
+        private List<? extends TypeMirror> imports;
+        private TypeMirror superClass;
         private String className;
 
         public Builder setUseDefault(boolean useDefault) {
@@ -99,18 +104,18 @@ public class AnnotationMapping {
             return this;
         }
 
-        public Builder setAnnotations(String[] annotations) {
+        public Builder setAnnotations(List<? extends TypeMirror> annotations) {
             this.annotations = annotations;
             return this;
         }
 
-        public Builder setImports(String[] imports) {
+        public Builder setImports(List<? extends TypeMirror> imports) {
             this.imports = imports;
             return this;
         }
 
-        public Builder setSuperClassName(String superClassName) {
-            this.superClassName = superClassName;
+        public Builder setSuperClass(TypeMirror superClass) {
+            this.superClass = superClass;
             return this;
         }
 
@@ -144,16 +149,16 @@ public class AnnotationMapping {
         return packageName;
     }
 
-    public String[] getAnnotations() {
+    public List<? extends TypeMirror> getAnnotations() {
         return annotations;
     }
 
-    public String[] getImports() {
+    public List<? extends TypeMirror> getImports() {
         return imports;
     }
 
-    public String getSuperClassName() {
-        return superClassName;
+    public TypeMirror getSuperClass() {
+        return superClass;
     }
 
     public String getClassName() {

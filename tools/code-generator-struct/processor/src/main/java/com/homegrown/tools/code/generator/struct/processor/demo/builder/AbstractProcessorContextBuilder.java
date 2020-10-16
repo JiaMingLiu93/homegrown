@@ -3,11 +3,8 @@ package com.homegrown.tools.code.generator.struct.processor.demo.builder;
 import com.homegrown.tools.code.generator.struct.processor.demo.annotation.AnnotationMapping;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ConfigurationProcessor;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ElementProcessor;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author youyu
@@ -64,11 +61,11 @@ public abstract class AbstractProcessorContextBuilder implements ProcessorContex
         if (haveConfigured()){
             annotationMapping = getAnnotationMapping(config.getConfigElement().getAnnotation(getTypeConfigClass()));
             //cache super class TypeElement
-            config.catchAndCacheTypeElement(annotationMapping.getSuperClassName());
-            //cache annotation TypeElement
-            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getAnnotations()));
-            //cache imports TypeElement
-            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getImports()));
+            config.catchAndCacheTypeElement(annotationMapping.getSuperClass().toString());
+//            //cache annotation TypeElement
+//            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getAnnotations()));
+//            //cache imports TypeElement
+//            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getImports()));
         }
     }
 

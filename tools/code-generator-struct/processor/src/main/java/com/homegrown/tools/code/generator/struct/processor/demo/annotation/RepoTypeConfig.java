@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface RepoTypeConfig {
     String packageName() default "";
-    String[] annotations() default {"@Repository"};
-    String[] imports() default {"import org.springframework.stereotype.Repository;"};
-    String superClassName() default "";
     String className() default "";
+    Class<?>[] annotations() default {};
+    Class<?>[] imports() default {};
+    Class<?> superClass();
 }

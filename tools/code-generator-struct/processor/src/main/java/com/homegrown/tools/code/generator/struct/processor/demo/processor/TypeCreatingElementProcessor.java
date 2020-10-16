@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -26,11 +27,16 @@ public class TypeCreatingElementProcessor implements ElementProcessor<List<Sourc
         if (context.ignoreMethods()){
 
             TreeSet<Type> extraImportedTypes = new TreeSet<>();
-            TypeElement repoSuperClassTypeElement = context.getSuperClassTypeElement();
-            extraImportedTypes.add(context.getTypeFactory().getType(repoSuperClassTypeElement));
-            extraImportedTypes.add(context.getModelType());
-            List<TypeElement> extraImports = context.getExtraImports();
 
+            TypeMirror superClass = context.getSuperClass();
+
+            Type superClassType = context.getTypeFactory().getType(superClass);
+            TypeElement repoSuperClassTypeElement = superClassType.getTypeElement();
+            extraImportedTypes.add(superClassType);
+
+            extraImportedTypes.add(context.getModelType());
+
+            List<? extends TypeMirror> extraImports = context.getExtraImports();
             if (CollectionUtils.isNotEmpty(extraImports)) {
                 extraImports.forEach(extraImport-> extraImportedTypes.add(typeFactory.getType(extraImport)));
             }
@@ -48,7 +54,7 @@ public class TypeCreatingElementProcessor implements ElementProcessor<List<Sourc
             }
 
             List<Annotation> annotations = null;
-            List<TypeElement> annotationTypeElements = context.getAnnotations();
+            List<? extends TypeMirror> annotationTypeElements = context.getAnnotations();
             if (CollectionUtils.isNotEmpty(annotationTypeElements)){
                 annotations = annotationTypeElements.stream().map(annotation->{
                     Type type = typeFactory.getType(annotation);

@@ -274,6 +274,29 @@ public class Type extends ModelElement implements Comparable<Type> {
         return boundingBase;
     }
 
+    /**
+     * Returns a String that could be used in generated code to reference to this {@link Type}.<br>
+     *  <p>
+     * The first time a name is referred-to it will be marked as to be imported. For instance
+     * {@code LocalDateTime} can be one of {@code java.time.LocalDateTime} and {@code org.joda.LocalDateTime})
+     * <p>
+     * If the {@code java.time} variant is referred to first, the {@code java.time.LocalDateTime} will be imported
+     * and the {@code org.joda} variant will be referred to with its FQN.
+     *
+     * @return Just the name if this {@link Type} will be imported, otherwise the fully-qualified name.
+     */
+    public String createReferenceName() {
+        return isToBeImported() ? name :  ( shouldUseSimpleName() ? name : qualifiedName );
+    }
+    private boolean shouldUseSimpleName() {
+        String fqn = notToBeImportedTypes.get( name );
+        return this.qualifiedName.equals( fqn );
+    }
+
+    public List<Type> getTypeParameters() {
+        return typeParameters;
+    }
+
     public String getName() {
         return name;
     }

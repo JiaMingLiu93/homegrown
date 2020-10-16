@@ -26,9 +26,11 @@ public class TypeRetrievingElementProcessor implements ElementProcessor<Boolean,
 
     @Override
     public List<SourceMethod> process(ProcessorContext context, TypeElement typeElement, Boolean isValid) {
+        //if the file to be generated is invalid, return empty source methods
         if (!isValid){
             return Collections.emptyList();
         }
+
         this.typeFactory = context.getTypeFactory();
         this.typeUtils = context.getTypeUtils();
 

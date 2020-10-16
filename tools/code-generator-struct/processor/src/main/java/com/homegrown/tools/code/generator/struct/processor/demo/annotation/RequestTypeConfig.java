@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface RequestTypeConfig {
     String packageName() default "";
-    String[] annotations() default {};
-    String[] imports() default {};
-    String superClassName() default "";
     String className() default "";
+    Class<?>[] annotations() default {};
+    Class<?>[] imports() default {};
+    Class<?> superClass();
 }

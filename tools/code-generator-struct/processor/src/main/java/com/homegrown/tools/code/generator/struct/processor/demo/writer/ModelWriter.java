@@ -47,10 +47,10 @@ public class ModelWriter {
         CONFIGURATION = new Configuration( Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS );
         CONFIGURATION.setTemplateLoader( new SimpleClasspathLoader() );
         CONFIGURATION.setObjectWrapper( new DefaultObjectWrapper( Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS ) );
-//        CONFIGURATION.setSharedVariable(
-//            "includeModel",
-//            new ModelIncludeDirective( CONFIGURATION )
-//        );
+        CONFIGURATION.setSharedVariable(
+            "includeModel",
+            new ModelIncludeDirective( CONFIGURATION )
+        );
         // do not refresh/gc the cached templates, as we never change them at runtime
         CONFIGURATION.setCacheStorage( new StrongCacheStorage() );
         CONFIGURATION.setTemplateUpdateDelay( Integer.MAX_VALUE );

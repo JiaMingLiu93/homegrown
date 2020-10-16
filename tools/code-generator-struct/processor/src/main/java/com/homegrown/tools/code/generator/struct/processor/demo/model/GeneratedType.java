@@ -202,4 +202,8 @@ public abstract class GeneratedType extends ModelElement {
         return importTypeNames;
     }
 
+    public List<Annotation> getAnnotations() {
+        return annotations;
+    }
+
 }

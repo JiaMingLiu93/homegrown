@@ -4,6 +4,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -12,7 +13,6 @@ import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Typ
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.TypeFactory;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ElementProcessor.ProcessorContext;
 
-import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -121,7 +121,12 @@ public class DefaultElementProcessorContext implements ProcessorContext {
 
     @Override
     public String getSuperClassName() {
-        return config.getSimpleClassName(annotationMapping.getSuperClassName());
+        return config.getSimpleClassName(getSuperClass().toString());
+    }
+
+    @Override
+    public TypeMirror getSuperClass(){
+        return annotationMapping.getSuperClass();
     }
 
     @Override
@@ -141,7 +146,7 @@ public class DefaultElementProcessorContext implements ProcessorContext {
 
     @Override
     public TypeElement getSuperClassTypeElement() {
-        return existedTypeElements.get(annotationMapping.getSuperClassName());
+        return existedTypeElements.get(annotationMapping.getSuperClass());
     }
 
     @Override
@@ -165,14 +170,14 @@ public class DefaultElementProcessorContext implements ProcessorContext {
     }
 
     @Override
-    public List<TypeElement> getAnnotations() {
-        return Arrays.stream(annotationMapping.getAnnotations()).map(existedTypeElements::get).collect(Collectors.toList());
+    public List<? extends TypeMirror> getAnnotations() {
+        return annotationMapping.getAnnotations();
 
     }
 
     @Override
-    public List<TypeElement> getExtraImports() {
-        return Arrays.stream(annotationMapping.getImports()).map(existedTypeElements::get).collect(Collectors.toList());
+    public List<? extends TypeMirror> getExtraImports() {
+        return annotationMapping.getImports();
     }
 
     public void setIgnoreMethods(boolean ignoreMethods) {
