@@ -10,11 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  **/
 @SpringBootApplication
 public class SpringBootEventTest {
-    public static void main(String[] args) {
-        SpringApplication springApplication = new SpringApplication(SpringApplicationTest.class);
-        springApplication.addListeners(event -> {
-            System.err.println(event.getClass());
-        });
-        springApplication.run(args);
-    }
+//    public static void main(String[] args) {
+//        SpringApplication springApplication = new SpringApplication(SpringApplicationTest.class);
+//        springApplication.addListeners(event -> {
+//            System.err.println(event.getClass());
+//        });
+//        springApplication.run(args);
+//    }
 }

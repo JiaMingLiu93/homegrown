@@ -1,0 +1,4 @@
+127.0.0.1 - - [04/Jul/2020:19:58:01 +0800] GET /index.html HTTP/1.1 200 294 http-nio-8080-exec-1 26422
+127.0.0.1 - - [04/Jul/2020:20:24:11 +0800] GET /index.html HTTP/1.1 200 294 http-nio-8080-exec-3 239
+127.0.0.1 - - [04/Jul/2020:20:24:12 +0800] GET /%3Cspring:theme%20code='styleSheet'/%3E HTTP/1.1 404 992 http-nio-8080-exec-4 38
+127.0.0.1 - - [04/Jul/2020:20:24:12 +0800] GET /favicon.ico HTTP/1.1 404 992 http-nio-8080-exec-5 4

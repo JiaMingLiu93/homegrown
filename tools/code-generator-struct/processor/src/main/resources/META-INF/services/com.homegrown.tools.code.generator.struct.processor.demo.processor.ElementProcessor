@@ -1,0 +1,4 @@
+com.homegrown.tools.code.generator.struct.processor.demo.processor.TypeCreatingElementProcessor
+com.homegrown.tools.code.generator.struct.processor.demo.processor.TypeRenderingElementProcessor
+com.homegrown.tools.code.generator.struct.processor.demo.processor.TypeRetrievingElementProcessor
+com.homegrown.tools.code.generator.struct.processor.demo.processor.TypeCheckElementProcessor
