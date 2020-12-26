@@ -57,8 +57,8 @@ public class ModelWriter {
         CONFIGURATION.setLocalizedLookup( false );
     }
 
-    public void writeModel(FileWriter sourceFile, Writable model) {
-        try ( BufferedWriter writer = new BufferedWriter( new IndentationCorrectingWriter( sourceFile))) {
+    public void writeModel(FileObject sourceFile, Writable model) {
+        try ( BufferedWriter writer = new BufferedWriter( new IndentationCorrectingWriter( sourceFile.openWriter()))) {
                 Map<Class<?>, Object> values = new HashMap<>();
                 values.put( Configuration.class, CONFIGURATION );
 

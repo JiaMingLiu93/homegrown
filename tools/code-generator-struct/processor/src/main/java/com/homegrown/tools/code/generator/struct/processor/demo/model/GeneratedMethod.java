@@ -5,7 +5,9 @@ import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Mod
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Parameter;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Type;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.source.Method;
+import org.apache.commons.collections4.CollectionUtils;
 
+import javax.lang.model.element.Modifier;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,9 +24,11 @@ public class GeneratedMethod extends ModelElement {
     private final List<Type> thrownTypes;
     private final boolean isStatic;
     private final String resultName;
+    private final boolean overridden;
 
     public GeneratedMethod(String name, List<Parameter> parameters, Type returnType,
-                           Accessibility accessibility, List<Type> thrownTypes, boolean isStatic, String resultName) {
+                           Accessibility accessibility, List<Type> thrownTypes, boolean isStatic,
+                           String resultName,boolean overridden) {
         this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
@@ -32,6 +36,7 @@ public class GeneratedMethod extends ModelElement {
         this.thrownTypes = thrownTypes;
         this.isStatic = isStatic;
         this.resultName = resultName;
+        this.overridden = overridden;
     }
 
     public static class Builder {
@@ -49,7 +54,8 @@ public class GeneratedMethod extends ModelElement {
                     method.getAccessibility(),
                     method.getThrownTypes(),
                     method.isStatic(),
-                    null);
+                    null,
+                    method.overridesMethod());
         }
     }
 
@@ -58,14 +64,20 @@ public class GeneratedMethod extends ModelElement {
     public Set<Type> getImportTypes() {
         Set<Type> types = new HashSet<>();
 
-        for ( Parameter param : parameters ) {
-            types.addAll( param.getType().getImportTypes() );
+        if (CollectionUtils.isNotEmpty(parameters)){
+            for ( Parameter param : parameters ) {
+                types.addAll( param.getType().getImportTypes() );
+            }
         }
 
-        types.addAll( getReturnType().getImportTypes() );
+        if (getReturnType() != null){
+            types.addAll( getReturnType().getImportTypes() );
+        }
 
-        for ( Type type : thrownTypes ) {
-            types.addAll( type.getImportTypes() );
+        if (CollectionUtils.isNotEmpty(thrownTypes)){
+            for ( Type type : thrownTypes ) {
+                types.addAll( type.getImportTypes() );
+            }
         }
 
         return types;

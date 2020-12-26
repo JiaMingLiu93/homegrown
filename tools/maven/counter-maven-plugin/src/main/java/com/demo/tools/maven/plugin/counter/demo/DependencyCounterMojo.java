@@ -12,6 +12,7 @@ import org.apache.maven.project.MavenProject;
 import java.util.List;
 
 /**
+ * 参考：https://www.baeldung.com/maven-plugin
  * @author youyu
  */
 @Mojo(name = "dependency-counter", defaultPhase = LifecyclePhase.COMPILE)
@@ -27,6 +28,10 @@ public class DependencyCounterMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         List<Dependency> dependencies = project.getDependencies();
+
+        List compileSourceRoots = project.getCompileSourceRoots();
+
+        compileSourceRoots.forEach(o -> getLog().info(o.toString()));
 
         long numDependencies = dependencies.stream()
                 .filter(d -> (scope == null || scope.isEmpty()) || scope.equals(d.getScope()))

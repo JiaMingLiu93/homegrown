@@ -12,8 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface ServiceTypeConfig {
     String packageName() default "";
-    String[] annotations() default {};
-    String[] imports() default {};
-    String superClassName() default "";
+    Class<?>[] annotations() default {};
+    Class<?>[] imports() default {};
+    Class<?> superClass() default Object.class;
     String scope() default "read";
+    String className() default "";
 }

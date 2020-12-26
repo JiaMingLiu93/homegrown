@@ -1,8 +1,11 @@
 package com.homegrown.tools.code.generator.struct.processor.demo.processor;
 
 import com.homegrown.tools.code.generator.struct.processor.demo.annotation.AnnotationMapping;
+import com.homegrown.tools.code.generator.struct.processor.demo.annotation.GenerateTypeEnum;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Type;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.TypeFactory;
+import com.homegrown.tools.code.generator.struct.processor.demo.model.source.Method;
+import com.homegrown.tools.code.generator.struct.processor.demo.model.source.SourceMethod;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
@@ -51,7 +54,11 @@ public interface ElementProcessor<P, R> {
          */
         boolean isErroneous();
 
-        TypeElement getFacadeTypeElement();
+        /**
+         * help to generate type with a template typeElement,for example dubbo api
+         * @return TypeElement
+         */
+        TypeElement getTemplateTypeElement();
 
         String getPackageName();
 
@@ -59,7 +66,7 @@ public interface ElementProcessor<P, R> {
 
         String getSuperClassName();
 
-        TypeMirror getSuperClass();
+        String getSuperClass();
 
         List<TypeElement> getMembers();
 
@@ -73,7 +80,7 @@ public interface ElementProcessor<P, R> {
 
         Type getModelType();
 
-        Map<Class<?>, AnnotationMapping> getConfigs();
+        Map<GenerateTypeEnum, AnnotationMapping> getConfigs();
 
         /**
          * To get root elements of current round
@@ -84,6 +91,8 @@ public interface ElementProcessor<P, R> {
         List<? extends TypeMirror> getAnnotations();
 
         List<? extends TypeMirror> getExtraImports();
+
+        List<Method> getMethods();
     }
 
     /**

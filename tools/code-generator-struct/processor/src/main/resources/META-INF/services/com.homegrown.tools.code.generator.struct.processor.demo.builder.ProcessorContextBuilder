@@ -1,2 +1,5 @@
-com.homegrown.tools.code.generator.struct.processor.demo.builder.RepoProcessorContextBuilder
+#com.homegrown.tools.code.generator.struct.processor.demo.builder.RepoProcessorContextBuilder
 com.homegrown.tools.code.generator.struct.processor.demo.builder.RequestProcessorContextBuilder
+#com.homegrown.tools.code.generator.struct.processor.demo.builder.ServiceProcessorContextBuilder
+com.homegrown.tools.code.generator.struct.processor.demo.builder.InfoProcessorContextBuilder
+com.homegrown.tools.code.generator.struct.processor.demo.builder.FacadeProcessorContextBuilder

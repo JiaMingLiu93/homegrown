@@ -15,5 +15,5 @@ public @interface RepoTypeConfig {
     String className() default "";
     Class<?>[] annotations() default {};
     Class<?>[] imports() default {};
-    Class<?> superClass();
+    String superClass();
 }

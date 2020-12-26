@@ -10,6 +10,7 @@ import java.util.List;
  * @author youyu
  */
 public class AnnotationMapping {
+    private GenerateTypeEnum type;
     private boolean useDefault;
     private String methodName;
     private String scope;
@@ -18,7 +19,8 @@ public class AnnotationMapping {
     private String packageName;
     private List<? extends TypeMirror> annotations;
     private List<? extends TypeMirror> imports;
-    private TypeMirror superClass;
+    private String superClass;
+    private String superInterface;
     private String className;
 
     public AnnotationMapping(Builder builder) {
@@ -31,6 +33,7 @@ public class AnnotationMapping {
         this.imports = builder.imports;
         this.superClass = builder.superClass;
         this.className = builder.className;
+        this.type = builder.type;
     }
 
     public static AnnotationMapping from(GeneratorConfig config) {
@@ -48,7 +51,7 @@ public class AnnotationMapping {
                 .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
                 .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
                 .setPackageName(config.packageName())
-                .setSuperClass(APUtils.getTypeMirrorFromAnnotationValue(config::superClass).get(0))
+                .setSuperClass(config.superClass())
                 .build();
     }
 
@@ -58,13 +61,32 @@ public class AnnotationMapping {
                 .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
                 .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
                 .setPackageName(config.packageName())
-                .setSuperClass(APUtils.getTypeMirrorFromAnnotationValue(config::superClass).get(0))
+                .setSuperClass(config.superClass())
                 .build();
     }
 
 
     public static AnnotationMapping from(ServiceTypeConfig config) {
-        return null;
+        return new Builder()
+                .setClassName(config.className())
+                .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
+                .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
+                .setPackageName(config.packageName())
+                .setScope(config.scope())
+                .build();
+    }
+
+    public static AnnotationMapping from(TypeConfig config) {
+        return new Builder()
+                .setClassName(config.className())
+                .setAnnotations(APUtils.getTypeMirrorFromAnnotationValue(config::annotations))
+                .setImports(APUtils.getTypeMirrorFromAnnotationValue(config::imports))
+                .setPackageName(config.packageName())
+                .setSuperClass(config.superClass())
+                .setSuperInterface(config.superInterface())
+                .setType(config.type())
+                .setScope(config.scope())
+                .build();
     }
 
     public static class Builder{
@@ -76,8 +98,20 @@ public class AnnotationMapping {
         private String packageName;
         private List<? extends TypeMirror> annotations;
         private List<? extends TypeMirror> imports;
-        private TypeMirror superClass;
+        private String superClass;
+        private String superInterface;
         private String className;
+        private GenerateTypeEnum type;
+
+        public Builder setType(GenerateTypeEnum type){
+            this.type = type;
+            return this;
+        }
+
+        public Builder setSuperInterface(String superInterface){
+            this.superInterface = superInterface;
+            return this;
+        }
 
         public Builder setUseDefault(boolean useDefault) {
             this.useDefault = useDefault;
@@ -114,7 +148,7 @@ public class AnnotationMapping {
             return this;
         }
 
-        public Builder setSuperClass(TypeMirror superClass) {
+        public Builder setSuperClass(String superClass) {
             this.superClass = superClass;
             return this;
         }
@@ -157,11 +191,22 @@ public class AnnotationMapping {
         return imports;
     }
 
-    public TypeMirror getSuperClass() {
+    public String getSuperClass() {
         return superClass;
     }
 
     public String getClassName() {
         return className;
+    }
+
+    public GenerateTypeEnum getType() {
+        return type;
+    }
+    public String getSuperInterface() {
+        return superInterface;
+    }
+
+    public String getQualifiedClassName(){
+        return packageName+"."+className;
     }
 }

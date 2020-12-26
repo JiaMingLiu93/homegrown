@@ -55,6 +55,7 @@ public abstract class GeneratedType extends ModelElement {
     private final String superClassName;
     private final String interfacePackage;
     private final String interfaceName;
+
     private final List<GeneratedMethod> methods;
     private final List<Annotation> annotations;
     private final SortedSet<Type> extraImportedTypes;
@@ -204,6 +205,14 @@ public abstract class GeneratedType extends ModelElement {
 
     public List<Annotation> getAnnotations() {
         return annotations;
+    }
+
+    public List<GeneratedMethod> getMethods() {
+        return methods;
+    }
+
+    public List<Field> getFields() {
+        return fields;
     }
 
 }

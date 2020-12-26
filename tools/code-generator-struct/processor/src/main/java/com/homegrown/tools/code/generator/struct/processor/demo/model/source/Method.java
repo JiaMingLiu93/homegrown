@@ -13,8 +13,8 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.List;
 
 /**
- * This interface makes available common method properties and a matching method There are 2 known implementors:
- * {@link BuiltInMethod} and {@link SourceMethod}
+ * This interface makes available common method properties and a matching method There is a known implementor:
+ * {@link SourceMethod}
  *
  * @author youyu
  */
@@ -37,7 +37,7 @@ public interface Method {
      *
      * @return The declaring mapper type
      */
-    Type getDeclaringMapper();
+    Type getDeclaringTemplate();
 
     /**
      * Returns then name of the method.
@@ -61,35 +61,6 @@ public interface Method {
      */
     List<Parameter> getSourceParameters();
 
-    /**
-     * returns the list of mapping context parameters, i.e. those parameters that are annotated with
-     * {@link org.mapstruct.Context}.
-     *
-     * @return list of context parameters
-     */
-    List<Parameter> getContextParameters();
-
-    /**
-     * Returns the parameter designated as mapping target (if present) {@link org.mapstruct.MappingTarget}
-     *
-     * @return mapping target parameter (when present) null otherwise.
-     */
-    Parameter getMappingTargetParameter();
-
-    /**
-     * Returns whether the meethod is designated as bean factory for
-     * mapping target {@link  org.mapstruct.ObjectFactory }
-     *
-     * @return true if it is a target bean factory.
-     */
-    boolean isObjectFactory();
-
-    /**
-     * Returns the parameter designated as target type (if present) {@link org.mapstruct.TargetType }
-     *
-     * @return target type parameter (when present) null otherwise.
-     */
-    Parameter getTargetTypeParameter();
 
 
     /**
@@ -153,12 +124,6 @@ public interface Method {
      * @return {@code true}, if the method represents a mapping lifecycle callback (Before/After mapping method)
      */
     boolean isLifecycleCallbackMethod();
-
-    /**
-     * @return {@code true}, if the method is an update method, i.e. it has a parameter annotated with
-     *         {@code @MappingTarget}.
-     */
-    boolean isUpdateMethod();
 
     /**
      * @return the short name for error messages when verbose, full name when not

@@ -9,11 +9,16 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.homegrown.tools.code.generator.struct.processor.demo.annotation.AnnotationMapping;
+import com.homegrown.tools.code.generator.struct.processor.demo.annotation.GenerateTypeEnum;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.Type;
 import com.homegrown.tools.code.generator.struct.processor.demo.model.common.TypeFactory;
+import com.homegrown.tools.code.generator.struct.processor.demo.model.source.Method;
+import com.homegrown.tools.code.generator.struct.processor.demo.model.source.SourceMethod;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ElementProcessor.ProcessorContext;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +29,7 @@ public class DefaultElementProcessorContext implements ProcessorContext {
     private final AnnotationMapping annotationMapping;
     private final RoundContext roundContext;
     private final ProcessingEnvironment processingEnvironment;
-    private final TypeElement facadeTypeElement;
+    private final TypeElement templateTypeElement;
     private boolean ignoreMethods;
     private final String packageName;
     private final String path;
@@ -35,17 +40,19 @@ public class DefaultElementProcessorContext implements ProcessorContext {
 
     private final Map<String,TypeElement> existedTypeElements;
 
-    private final Map<Class<?>, AnnotationMapping> configs;
+    private final Map<GenerateTypeEnum, AnnotationMapping> configs;
 
     private final Set<? extends Element> rootElements;
 
-    public DefaultElementProcessorContext(ConfigurationProcessor config, AnnotationMapping annotationMapping, TypeElement facadeTypeElement,
-                                          boolean ignoreMethods, String path, List<TypeElement> members, String type) {
+    private List<SourceMethod> methods;
+
+    public DefaultElementProcessorContext(ConfigurationProcessor config, AnnotationMapping annotationMapping, TypeElement templateTypeElement,
+                                          boolean ignoreMethods, String path, List<TypeElement> members, String type, Function<TypeFactory, List<SourceMethod>> methods) {
         this.config = config;
         this.annotationMapping = annotationMapping;
         this.roundContext = config.getRoundContext();
         this.processingEnvironment = config.getProcessingEnv();
-        this.facadeTypeElement = facadeTypeElement;
+        this.templateTypeElement = templateTypeElement;
         this.ignoreMethods = ignoreMethods;
         this.packageName = annotationMapping.getPackageName();
         this.path = path;
@@ -62,6 +69,10 @@ public class DefaultElementProcessorContext implements ProcessorContext {
                 new HashMap<>(),
                 false
         );
+
+        if (methods != null){
+            this.methods = methods.apply(this.getTypeFactory());
+        }
     }
 
     @Override
@@ -105,8 +116,8 @@ public class DefaultElementProcessorContext implements ProcessorContext {
     }
 
     @Override
-    public TypeElement getFacadeTypeElement() {
-        return facadeTypeElement;
+    public TypeElement getTemplateTypeElement() {
+        return templateTypeElement;
     }
 
     @Override
@@ -121,11 +132,11 @@ public class DefaultElementProcessorContext implements ProcessorContext {
 
     @Override
     public String getSuperClassName() {
-        return config.getSimpleClassName(getSuperClass().toString());
+        return config.getSimpleClassName(getSuperClass());
     }
 
     @Override
-    public TypeMirror getSuperClass(){
+    public String getSuperClass(){
         return annotationMapping.getSuperClass();
     }
 
@@ -151,16 +162,16 @@ public class DefaultElementProcessorContext implements ProcessorContext {
 
     @Override
     public String getModelName() {
-        return config.getSimpleClassName(config.getAnnotationMappingOfGeneratorConfig().getModel());
+        return config.getSimpleClassName(config.getGeneratorConfig().getModel());
     }
 
     @Override
     public Type getModelType() {
-        return typeFactory.getType(existedTypeElements.get(config.getAnnotationMappingOfGeneratorConfig().getModel()));
+        return typeFactory.getType(existedTypeElements.get(config.getGeneratorConfig().getModel()));
     }
 
     @Override
-    public Map<Class<?>, AnnotationMapping> getConfigs() {
+    public Map<GenerateTypeEnum, AnnotationMapping> getConfigs() {
         return configs;
     }
 
@@ -178,6 +189,11 @@ public class DefaultElementProcessorContext implements ProcessorContext {
     @Override
     public List<? extends TypeMirror> getExtraImports() {
         return annotationMapping.getImports();
+    }
+
+    @Override
+    public List<Method> getMethods() {
+        return new ArrayList<>(methods);
     }
 
     public void setIgnoreMethods(boolean ignoreMethods) {

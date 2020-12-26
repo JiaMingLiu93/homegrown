@@ -10,6 +10,7 @@
     <modules>
         <module>javac</module>
         <module>compiler</module>
+        <module>servlet</module>
     </modules>
     <packaging>pom</packaging>
 

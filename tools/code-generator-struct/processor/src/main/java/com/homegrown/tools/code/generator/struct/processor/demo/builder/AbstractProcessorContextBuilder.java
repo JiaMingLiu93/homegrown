@@ -1,24 +1,31 @@
 package com.homegrown.tools.code.generator.struct.processor.demo.builder;
 
 import com.homegrown.tools.code.generator.struct.processor.demo.annotation.AnnotationMapping;
+import com.homegrown.tools.code.generator.struct.processor.demo.annotation.GenerateTypeEnum;
+import com.homegrown.tools.code.generator.struct.processor.demo.annotation.TypeConfig;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ConfigurationProcessor;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ElementProcessor;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 
 /**
  * @author youyu
  */
 public abstract class AbstractProcessorContextBuilder implements ProcessorContextBuilder {
     public static final String CLASS = "class";
+    public static final String INTERFACE = "interface";
     protected ConfigurationProcessor config;
     protected AnnotationMapping annotationMapping;
 
     @Override
-    public ElementProcessor.ProcessorContext build() {
+    public ElementProcessor.ProcessorContext build(ConfigurationProcessor config) {
+        this.config = config;
+        this.annotationMapping = config.getConfigs().get(getType());
+
         if (haveConfigured()){
             if (!processed()){
-                cacheConfig();
+                recordProcessing();
                 return doBuild();
             }
         }
@@ -26,9 +33,14 @@ public abstract class AbstractProcessorContextBuilder implements ProcessorContex
         return null;
     }
 
-    private void cacheConfig() {
-        config.getConfigs().put(getTypeConfigClass(), annotationMapping);
+    /**
+     * record type processing
+     */
+    private void recordProcessing() {
+        config.getConfigRecords().add(getType());
     }
+
+    protected abstract GenerateTypeEnum getType();
 
     protected abstract ElementProcessor.ProcessorContext doBuild();
 
@@ -37,40 +49,28 @@ public abstract class AbstractProcessorContextBuilder implements ProcessorContex
      * @return
      */
     protected boolean processed(){
-        return config.getConfigs().containsKey(getTypeConfigClass());
+        return config.getConfigRecords().contains(getType());
     }
-
-    protected abstract Class<? extends Annotation> getTypeConfigClass();
-
-    protected abstract AnnotationMapping getAnnotationMapping(Annotation config);
 
     /**
      * check whether type is configured
      * @return
      */
     public boolean haveConfigured(){
-        return config.getConfigElement().getAnnotation(getTypeConfigClass()) != null;
-    }
-
-    /**
-     * To cache necessary type elements at the first round.
-     */
-    @Override
-    public void init(ConfigurationProcessor config) {
-        this.config = config;
-        if (haveConfigured()){
-            annotationMapping = getAnnotationMapping(config.getConfigElement().getAnnotation(getTypeConfigClass()));
-            //cache super class TypeElement
-            config.catchAndCacheTypeElement(annotationMapping.getSuperClass().toString());
-//            //cache annotation TypeElement
-//            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getAnnotations()));
-//            //cache imports TypeElement
-//            config.catchAndCacheTypeElements(Arrays.asList(annotationMapping.getImports()));
+        AnnotationMapping annotationMapping = config.getConfigs().get(getType());
+        if (annotationMapping == null){
+            return false;
         }
+        return Objects.equals(annotationMapping.getType(),getType());
     }
 
     protected String getFilePath(){
         String path = annotationMapping.getPackageName().replace(".", "/");
         return config.getPrePath() + path;
+    }
+
+    @Override
+    public void postAfter() {
+        config.catchAndCacheTypeElement(annotationMapping.getQualifiedClassName());
     }
 }

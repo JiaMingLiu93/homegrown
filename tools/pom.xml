@@ -18,6 +18,9 @@
         <module>maven/maven-demo</module>
         <module>code-generator-struct</module>
         <module>generator-demo</module>
+        <module>generator-demo1</module>
+        <module>generator-demo1/generator-demo3</module>
+        <module>generator-demo1/generator-demo4</module>
     </modules>
 
 

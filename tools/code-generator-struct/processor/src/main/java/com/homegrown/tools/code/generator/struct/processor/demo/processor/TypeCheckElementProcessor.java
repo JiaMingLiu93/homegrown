@@ -16,7 +16,7 @@ public class TypeCheckElementProcessor implements ElementProcessor<Void, Boolean
         boolean isValid = context.getRootElements().stream().
                 //1. compare class name, such as 'Test' that is the name of Test.class
                         filter(element -> element.getSimpleName().contentEquals(context.getSimpleClassName()))
-                //2. compare package name, such 'com.demo' that is the package of Test.class
+                //2. compare package name, such as 'com.demo' that is the package of Test.class
                 .noneMatch(element -> {
                     PackageElement packageElement = context.getElementUtils().getPackageOf(element);
                     boolean match = packageElement.getQualifiedName().contentEquals(context.getPackageName());

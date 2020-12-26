@@ -7,10 +7,7 @@ import com.homegrown.tools.code.generator.struct.processor.demo.processor.Elemen
  * @author youyu
  */
 public interface ProcessorContextBuilder {
-    /**
-     * init before generate
-     */
-    void init(ConfigurationProcessor config);
-    ProcessorContext build();
+    ProcessorContext build(ConfigurationProcessor config);
     int getPriority();
+    void postAfter();
 }

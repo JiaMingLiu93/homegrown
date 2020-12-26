@@ -27,8 +27,11 @@ import ${importedType};
 </#if>
 
 <#if methods??>
-<#list methods as method>
-<#nt>    <@includeModel object=method/>
+<#list methods as generatedMethod>
+<#nt>    <@includeModel object=generatedMethod/><#if type == "interface">;<#else>{
+}
+</#if>
 </#list>
 </#if>
+${'\n'}
 }

@@ -14,22 +14,16 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.util.Types;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Represents a mapping method with source and target type and the mappings between the properties of source and target
- * type.
- * <p>
- * A method can either be configured by itself or by another method for the inverse mapping direction (the appropriate
- * setter on {@link MappingMethodOptions} will be called in this case).
- *
- * @author Gunnar Morling
+ * Represents a method.
  */
 public class SourceMethod implements Method {
 
     private final Types typeUtils;
 
-    private final Type declaringMapper;
+    private final String name;
+    private final Type declaringTemplate;
     private final ExecutableElement executable;
     private final List<Parameter> parameters;
 
@@ -63,6 +57,7 @@ public class SourceMethod implements Method {
 
         private Types typeUtils;
         private List<SourceMethod> prototypeMethods = Collections.emptyList();
+        private String name;
 
         private boolean verboseLogging;
 
@@ -113,6 +108,11 @@ public class SourceMethod implements Method {
             return this;
         }
 
+        public Builder setName(String name){
+            this.name = name;
+            return this;
+        }
+
         public SourceMethod build() {
 
 
@@ -122,12 +122,17 @@ public class SourceMethod implements Method {
     }
 
     private SourceMethod(Builder builder) {
-        this.declaringMapper = builder.declaringMapper;
+        this.declaringTemplate = builder.declaringMapper;
         this.executable = builder.executable;
         this.parameters = builder.parameters;
         this.returnType = builder.returnType;
         this.exceptionTypes = builder.exceptionTypes;
-        this.accessibility = Accessibility.fromModifiers( builder.executable.getModifiers() );
+
+        if (builder.executable != null){
+            this.accessibility = Accessibility.fromModifiers( builder.executable.getModifiers() );
+        }else {
+            this.accessibility = Accessibility.PUBLIC;
+        }
 
 
         this.typeUtils = builder.typeUtils;
@@ -136,6 +141,8 @@ public class SourceMethod implements Method {
         this.mapperToImplement = builder.definingType;
 
         this.verboseLogging = builder.verboseLogging;
+
+        this.name = builder.name;
     }
 
 
@@ -146,8 +153,8 @@ public class SourceMethod implements Method {
     }
 
     @Override
-    public Type getDeclaringMapper() {
-        return declaringMapper;
+    public Type getDeclaringTemplate() {
+        return declaringTemplate;
     }
 
     @Override
@@ -157,7 +164,7 @@ public class SourceMethod implements Method {
 
     @Override
     public String getName() {
-        return executable.getSimpleName().toString();
+        return name;
     }
 
     @Override
@@ -168,21 +175,6 @@ public class SourceMethod implements Method {
     @Override
     public List<Parameter> getSourceParameters() {
         return null;
-    }
-
-    @Override
-    public List<Parameter> getContextParameters() {
-        return null;
-    }
-
-    @Override
-    public Parameter getMappingTargetParameter() {
-        return null;
-    }
-
-    @Override
-    public boolean isObjectFactory() {
-        return false;
     }
 
 
@@ -213,18 +205,12 @@ public class SourceMethod implements Method {
 
 
     @Override
-    public Parameter getTargetTypeParameter() {
-        return null;
-    }
-
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder( returnType.toString() );
         sb.append( " " );
 
-        if ( declaringMapper != null ) {
-            sb.append( declaringMapper ).append( "." );
+        if ( declaringTemplate != null ) {
+            sb.append(declaringTemplate).append( "." );
         }
 
         sb.append( getName() ).append( "(" ).append( Strings.join( parameters, ", " ) ).append( ")" );
@@ -241,7 +227,10 @@ public class SourceMethod implements Method {
      */
     @Override
     public boolean overridesMethod() {
-        return declaringMapper == null && executable.getModifiers().contains( Modifier.ABSTRACT );
+        if (hasExecutable()){
+            return declaringTemplate == null && executable.getModifiers().contains( Modifier.ABSTRACT );
+        }
+        return false;
     }
 
     @Override
@@ -252,7 +241,14 @@ public class SourceMethod implements Method {
 
     @Override
     public boolean isStatic() {
-        return executable.getModifiers().contains( Modifier.STATIC );
+        if (hasExecutable()){
+            return executable.getModifiers().contains( Modifier.STATIC );
+        }
+        return false;
+    }
+
+    private boolean hasExecutable() {
+        return executable != null;
     }
 
     @Override
@@ -277,12 +273,10 @@ public class SourceMethod implements Method {
      * methods
      */
     public boolean isAbstract() {
-        return executable.getModifiers().contains( Modifier.ABSTRACT );
-    }
-
-    @Override
-    public boolean isUpdateMethod() {
-        return getMappingTargetParameter() != null;
+        if (hasExecutable()){
+            return executable.getModifiers().contains( Modifier.ABSTRACT );
+        }
+        return false;
     }
 
     @Override

@@ -38,8 +38,12 @@ public class TypeRetrievingElementProcessor implements ElementProcessor<Boolean,
             return Collections.emptyList();
         }
 
-        List<ExecutableElement> executableElements = Executables.getAllEnclosedExecutableElements(context.getElementUtils(), context.getFacadeTypeElement());
-        return executableElements.stream().map(executableElement -> getMethod(executableElement,context.getFacadeTypeElement())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(context.getMethods())){
+            return context.getMethods().stream().map(method -> (SourceMethod)method).collect(Collectors.toList());
+        }
+
+        List<ExecutableElement> executableElements = Executables.getAllEnclosedExecutableElements(context.getElementUtils(), context.getTemplateTypeElement());
+        return executableElements.stream().map(executableElement -> getMethod(executableElement,context.getTemplateTypeElement())).collect(Collectors.toList());
     }
 
     private SourceMethod getMethod(ExecutableElement method, TypeElement typeElement) {

@@ -32,17 +32,23 @@ public class ConfigurationProcessor extends AbstractProcessor {
 
     private AnnotationProcessorContext annotationProcessorContext;
     private int counter;
+
+    public TypeElement getFacadeTypeElement() {
+        return facadeTypeElement;
+    }
+
     private TypeElement facadeTypeElement;
     private Map<String,TypeElement> existedTypeElements = new HashMap<>();
     private ServiceTypeConfig serviceTypeConfig;
     private boolean isServiceProcessed;
     //cache configs
-    private Map<Class<?>, AnnotationMapping> configs = new HashMap<>();
+    private Map<GenerateTypeEnum, AnnotationMapping> configs = new HashMap<>();
+    private Set<GenerateTypeEnum> configRecords = new HashSet<>();
     private Set<? extends Element> rootElements;
     private Element configElement;
 
     private List<ProcessorContextBuilder> processorContextBuilders;
-    private Iterator<ProcessorContextBuilder> iterator;
+    private ListIterator<ProcessorContextBuilder> iterator;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -54,7 +60,7 @@ public class ConfigurationProcessor extends AbstractProcessor {
         );
 
         processorContextBuilders = getProcessorContextGenerators();
-        iterator = processorContextBuilders.iterator();
+        iterator = processorContextBuilders.listIterator();
 
         //init for the first round
         counter = 1;
@@ -77,34 +83,65 @@ public class ConfigurationProcessor extends AbstractProcessor {
             return false;
         }
 
-        if (CollectionUtils.isEmpty(annotations)){
+            rootElements = roundEnv.getRootElements();
+
+        if (CollectionUtils.isNotEmpty(annotations)){
+            configElement = getConfigElement(annotations, roundEnv);
+            GeneratorConfig generatorConfig = configElement.getAnnotation(GeneratorConfig.class);
+
+            if (generatorConfig == null){
+                System.out.println("no GeneratorConfig.");
+                return false;
+            }
+
+            configs.putIfAbsent(GenerateTypeEnum.GENERAL,AnnotationMapping.from(generatorConfig));
+            catchAndCacheTypeElement(generatorConfig.model());
+        }
+        //if it is first round and annotations are empty then skip
+        else if (counter == 1){
             return false;
         }
 
-        configElement = getConfigElement(annotations, roundEnv);
+        //test
 
-        GeneratorConfig generatorConfig = configElement.getAnnotation(GeneratorConfig.class);
+        //init facadeTypeElement
+//        if (facadeTypeElement == null){
+//
+//            Optional<TypeElement> facadeTypeElementOption = rootElements.stream().map(e -> {
+//                if (e.getSimpleName().toString().endsWith("Facade") && e.getSimpleName().toString().contains("TestFacade")) {
+//                    TypeElement element = asTypeElement(e);
+//                    return element;
+//                }
+//                return null;
+//            }).filter(Objects::nonNull).findFirst();
+//
+//            if (!facadeTypeElementOption.isPresent()){
+//                return false;
+//            }
+//            facadeTypeElement = facadeTypeElementOption.get();
+//        }
+        //test
 
-        if (generatorConfig == null){
+
+
+        List<TypeConfig> typeConfigs = Arrays.asList(configElement.getAnnotationsByType(TypeConfig.class));
+        if (CollectionUtils.isEmpty(typeConfigs)){
+            System.out.println("no TypeConfigs.");
             return false;
         }
-        rootElements = roundEnv.getRootElements();
+        typeConfigs.forEach(typeConfig -> configs.putIfAbsent(typeConfig.type(),AnnotationMapping.from(typeConfig)));
 
-        configs.putIfAbsent(GeneratorConfig.class,AnnotationMapping.from(generatorConfig));
-        catchAndCacheTypeElement(generatorConfig.model());
-
-
-        //init processorContextBuilders at first round
-        if (counter == FIRST_ROUND){
-            processorContextBuilders.forEach(processorContextBuilder -> {
-                processorContextBuilder.init(this);
-            });
+        //do sth for the pre round,for example caching generated typeElement
+        if (iterator.hasPrevious()){
+            ProcessorContextBuilder previous = iterator.previous();
+            previous.postAfter();
         }
 
+        //generate source code through processor
         while (iterator.hasNext()){
             ProcessorContextBuilder processorContextBuilder = iterator.next();
 
-            ProcessorContext processorContext = processorContextBuilder.build();
+            ProcessorContext processorContext = processorContextBuilder.build(this);
             if (processorContext != null){
                 processAvailableElements(processorContext);
                 counter++;
@@ -112,28 +149,7 @@ public class ConfigurationProcessor extends AbstractProcessor {
             }
         }
 
-
-        String matchSuffix = generatorConfig.matchSuffix();
-        String facadeName = generatorConfig.facadeName();
-
-
-
-        //init facadeTypeElement
-        if (facadeTypeElement == null){
-
-            Optional<TypeElement> facadeTypeElementOption = rootElements.stream().map(e -> {
-                if (e.getSimpleName().toString().endsWith(matchSuffix) && e.getSimpleName().toString().contains(facadeName)) {
-                    return asTypeElement(e);
-                }
-                return null;
-            }).filter(Objects::nonNull).findFirst();
-
-            if (!facadeTypeElementOption.isPresent()){
-                return false;
-            }
-            facadeTypeElement = facadeTypeElementOption.get();
-        }
-        return false;
+        return true;
     }
 
     private List<ProcessorContextBuilder> getProcessorContextGenerators() {
@@ -218,7 +234,7 @@ public class ConfigurationProcessor extends AbstractProcessor {
         Object sourceModel = null;
 
         for (ElementProcessor<?,?> processor : processors){
-           sourceModel = process(processorContext,processor,processorContext.getFacadeTypeElement(),sourceModel);
+           sourceModel = process(processorContext,processor,processorContext.getTemplateTypeElement(),sourceModel);
         }
     }
 
@@ -227,10 +243,6 @@ public class ConfigurationProcessor extends AbstractProcessor {
         @SuppressWarnings("unchecked")
         P sourceElement = (P) modelElement;
         return processor.process( context, mapperTypeElement, sourceElement );
-    }
-
-    private void processAvailableElements(Set<TypeElement> availableTypes, RoundContext roundContext) {
-
     }
 
     private List<ElementProcessor<?,?>> getProcessors(){
@@ -314,11 +326,6 @@ public class ConfigurationProcessor extends AbstractProcessor {
         return new RoundContext(annotationProcessorContext);
     }
 
-    public boolean configureDefault() {
-        GeneratorConfig generatorConfig = (GeneratorConfig) configs.get(GeneratorConfig.class);
-        return generatorConfig.useDefault();
-    }
-
     public String getSimpleClassName(String className) {
         return className.substring(className.lastIndexOf('.') + 1);
     }
@@ -345,7 +352,7 @@ public class ConfigurationProcessor extends AbstractProcessor {
         return new String(ch);
     }
 
-    public Map<Class<?>, AnnotationMapping> getConfigs() {
+    public Map<GenerateTypeEnum, AnnotationMapping> getConfigs() {
         return configs;
     }
 
@@ -353,8 +360,8 @@ public class ConfigurationProcessor extends AbstractProcessor {
         return processingEnv;
     }
 
-    public AnnotationMapping getAnnotationMappingOfGeneratorConfig(){
-        return configs.get(GeneratorConfig.class);
+    public AnnotationMapping getGeneratorConfig(){
+        return configs.get(GenerateTypeEnum.GENERAL);
     }
 
     public Map<String, TypeElement> getExistedTypeElements() {
@@ -375,5 +382,9 @@ public class ConfigurationProcessor extends AbstractProcessor {
 
     public String getSuperClassKey(AnnotationMapping annotation){
         return annotation.getPackageName()+ SUPER_CLASS_NAME;
+    }
+
+    public Set<GenerateTypeEnum> getConfigRecords() {
+        return configRecords;
     }
 }

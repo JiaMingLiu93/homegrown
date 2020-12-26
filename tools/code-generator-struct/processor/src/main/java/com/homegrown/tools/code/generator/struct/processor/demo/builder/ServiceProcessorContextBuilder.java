@@ -1,14 +1,8 @@
 package com.homegrown.tools.code.generator.struct.processor.demo.builder;
 
-import com.homegrown.tools.code.generator.struct.processor.demo.annotation.AnnotationMapping;
-import com.homegrown.tools.code.generator.struct.processor.demo.annotation.ServiceTypeConfig;
+import com.homegrown.tools.code.generator.struct.processor.demo.annotation.GenerateTypeEnum;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.DefaultElementProcessorContext;
 import com.homegrown.tools.code.generator.struct.processor.demo.processor.ElementProcessor;
-
-import javax.lang.model.element.TypeElement;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author youyu
@@ -16,33 +10,19 @@ import java.util.List;
 public class ServiceProcessorContextBuilder extends AbstractProcessorContextBuilder{
     @Override
     protected ElementProcessor.ProcessorContext doBuild() {
-//        String scope = serviceTypeConfig.scope();
-//        String model = generatorConfig.model();
-//        String simpleSourceName = model+upperCase(scope)+"Service";
-//
-//        String path = getPath(serviceTypeConfig.packageName());
-//
-//        //cache repo TypeElement if exist default
-//        catchAndCacheTypeElement(getDefaultRepoClassName(generatorConfig),"repo");
-//
-//        //round of service api
-//        DefaultElementProcessorContext defaultElementProcessorContext = new DefaultElementProcessorContext(roundContext, processingEnv, facadeTypeElement,
-//                simpleSourceName, false, serviceTypeConfig.packageName(), path, "", null, "interface", generatorConfig.model(), existedTypeElements, configs, rootElements);
-        return null;
+        return new DefaultElementProcessorContext(this.config,annotationMapping, config.getFacadeTypeElement(),
+                false,  getFilePath(), null, INTERFACE, null);
+
     }
 
     @Override
-    protected Class<? extends Annotation> getTypeConfigClass() {
-        return ServiceTypeConfig.class;
+    protected GenerateTypeEnum getType(){
+        return GenerateTypeEnum.SERVICE;
     }
 
-    @Override
-    protected AnnotationMapping getAnnotationMapping(Annotation config) {
-        return AnnotationMapping.from((ServiceTypeConfig)config);
-    }
 
     @Override
     public int getPriority() {
-        return 3;
+        return 41;
     }
 }

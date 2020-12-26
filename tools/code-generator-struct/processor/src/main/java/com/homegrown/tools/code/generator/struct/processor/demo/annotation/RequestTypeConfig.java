@@ -15,5 +15,6 @@ public @interface RequestTypeConfig {
     String className() default "";
     Class<?>[] annotations() default {};
     Class<?>[] imports() default {};
-    Class<?> superClass();
+
+    String superClass();
 }
