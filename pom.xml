@@ -23,6 +23,10 @@
       <module>middleware</module>
       <module>jdk1.7</module>
       <module>tools</module>
+      <module>component</module>
+    <module>component/uc</module>
+    <module>component/import-export-center</module>
+    <module>component/message-queue</module>
   </modules>
   <packaging>pom</packaging>
 
