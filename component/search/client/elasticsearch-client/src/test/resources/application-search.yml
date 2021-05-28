@@ -1,0 +1,20 @@
+search:
+  datasource:
+    mappingDisable: false
+    address: ${ELASTICSEARCH_HOST:127.0.0.1}:${ELASTICSEARCH_PORT:9200}
+    cluster: ${CLUSTER_NAME:}
+    username: ${ELASTICSEARCH_USERNAME:}
+    password: ${ELASTICSEARCH_PASSWORD:}
+    sniff: true
+    mappingLocations:
+      - mapping/*
+  retrieval:
+    multiTenant: false
+    maxResultWindow: 300000
+
+  mq:
+    topic: ${DEFAULT_TOPIC:data_sync_topic}
+    consumerGroup: ${SEARCH_CONSUMER_GROUP:searchConsumerGroup}
+
+  refresh:
+    enable: ${SEARCH_REFRESH_ENABLE:false}

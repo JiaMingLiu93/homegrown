@@ -1,0 +1,46 @@
+{
+  "aliases": {
+    "index_test": {}
+  },
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "attribute_values": {
+          "match_mapping_type": "*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      }
+    ],
+    "date_detection": false,
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "code": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "ownerId": {
+        "type": "long"
+      },
+      "createdAt": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "updatedAt": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "version": {
+        "type": "integer"
+      },
+      "itemArea": {
+        "type": "double"
+      }
+    }
+  }
+}
