@@ -15,7 +15,7 @@ public class QuickSort {
         System.out.println(Arrays.toString(a));
     }
 
-    private static void quickSort(int[] a,int p,int r){
+    public static void quickSort(int[] a,int p,int r){
         if (p>=r){
             return;
         }

@@ -6,21 +6,28 @@ package com.homegrown.component.search.client;
 public interface SearchClient {
 
     /**
-     * create scheme for search
-     * @param name scheme name
+     * create schema for search
+     * @param name schema name
      * @param ddl data description language
-     * @return
+     * @return whether successful
      */
-    boolean createWithSchema(String name, String ddl);
+    boolean createSchemaWith(String name, String ddl);
 
     /**
-     * create scheme for search with ext1
-     * @param name scheme name
+     * create schema for search with ext1
+     * @param name schema name
      * @param ddl data description language
      * @param ext1 ext
-     * @return
+     * @return whether successful
      */
-    boolean createWithSchema(String name, String ddl, String ext1);
+    boolean createSchemaWith(String name, String ddl, String ext1);
+
+    /**
+     * create schema from alias
+     * @param alias schema alias
+     * @return new schema name
+     */
+    String createSchemaFrom(String alias);
 
     /**
      * check if index exist
