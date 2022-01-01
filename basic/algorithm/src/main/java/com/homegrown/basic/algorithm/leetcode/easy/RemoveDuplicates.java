@@ -35,6 +35,11 @@ public class RemoveDuplicates {
         int i = removeDuplicates.removeDuplicates2(nums);
         System.out.println(i);
         System.out.println(Arrays.toString(nums));
+
+        int[] nums1 = new int[]{-3,-3,-2,-1,-1,0,0,0,0,0};
+        int j = removeDuplicates.removeDuplicateTest3(nums1,2);
+        System.out.println(j);
+        System.out.println(Arrays.toString(nums1));
     }
     public int removeDuplicates(int[] nums) {
         if (nums.length==0){
@@ -77,6 +82,22 @@ public class RemoveDuplicates {
         int slow=1,fast=1;
         while (fast<n){
             if (nums[fast] != nums[fast-1]){
+                nums[slow] = nums[fast];
+                slow++;
+            }
+            fast++;
+        }
+        return slow;
+    }
+
+    public int removeDuplicateTest3(int[] nums, int k){
+        int n = nums.length;
+        if (n == 0){
+            return 0;
+        }
+        int slow=1,fast=1;
+        while (fast<n){
+            if (fast<k || nums[fast] != nums[fast-k]){
                 nums[slow] = nums[fast];
                 slow++;
             }
